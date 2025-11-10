@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name="StarterBot Joystick + Flywheel + Servos", group="StarterBot")
-private class StarterBotTeleOpClanker extends LinearOpMode {
+public class StarterBotTeleOpClanker extends LinearOpMode {
 
     private DcMotor leftDrive, rightDrive;
     private DcMotor mainFlywhee
