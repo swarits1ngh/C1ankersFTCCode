@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class StarterBotTeleOpClanker extends LinearOpMode {
 
     private DcMotor leftDrive, rightDrive;
-    private DcMotor mainFlywhee
+    private DcMotor mainFlywheel
     private Servo rightSmallWheel, leftSmallWheel;
 
     @Override
@@ -55,7 +55,7 @@ public class StarterBotTeleOpClanker extends LinearOpMode {
 
             // --- Flywheel control (counterclockwise) ---
             double flywheelPower = gamepad1.right_trigger;
-            mainFlywheel.setPower(-flywheelPower);
+            mainFlywheel.setPower(flywheelPower);
 
             // --- Servo control for small wheels ---
             double servoInput = gamepad1.left_trigger; // 0 to 1
