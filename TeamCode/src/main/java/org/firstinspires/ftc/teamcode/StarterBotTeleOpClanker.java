@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class StarterBotTeleOpClanker extends LinearOpMode {
 
     private DcMotor leftDrive, rightDrive;
-    private DcMotor mainFlywheel
+    private DcMotor mainFlywheel;
     private Servo rightSmallWheel, leftSmallWheel;
 
     @Override
