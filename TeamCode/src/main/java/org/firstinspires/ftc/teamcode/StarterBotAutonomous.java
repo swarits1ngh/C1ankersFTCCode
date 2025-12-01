@@ -19,7 +19,7 @@ import org.opencv.imgproc.Imgproc;
 public class StarterBotAutonomous extends LinearOpMode {
 
     private DcMotor leftDrive, rightDrive;
-    private OpenCvCamera webcam;
+    public OpenCvCamera webcam;
     private BallDetectionPipeline pipeline;
 
     @Override
