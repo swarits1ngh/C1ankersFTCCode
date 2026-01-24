@@ -1,4 +1,3 @@
-// StarterBotTeleOpClanker.java
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -6,13 +5,17 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name="StarterBot Joystick + Flywheel + Servos + Intake", group="StarterBot")
+@TeleOp(name="StarterBot Buttons + Flywheel + Servos + Intake", group="StarterBot")
 public class StarterBotTeleOpClanker extends LinearOpMode {
 
     private DcMotor leftDrive, rightDrive;
     private DcMotor mainFlywheel;
     private DcMotor intakeBaby;
     private Servo rightSmallWheel, leftSmallWheel;
+
+    // Flywheel toggle state
+    private boolean flywheelOn = false;
+    private boolean lastAState = false;
 
     @Override
     public void runOpMode() {
@@ -32,7 +35,7 @@ public class StarterBotTeleOpClanker extends LinearOpMode {
         rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intakeBaby.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        // Drive motors direction (ensure forward is forward)
+        // Motor directions
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
 
@@ -54,10 +57,8 @@ public class StarterBotTeleOpClanker extends LinearOpMode {
         while (opModeIsActive()) {
 
             // ---------------- DRIVE CONTROL ----------------
-            // Left stick UP/DOWN = forward/back
-            // Right stick LEFT/RIGHT = turn
-            double move = -gamepad1.left_stick_y;    // Forward/backward
-            double turn = -gamepad1.right_stick_x;   // Corrected: RIGHT = turn right
+            double move = -gamepad1.left_stick_y;   // Forward/back
+            double turn = gamepad1.right_stick_x;   // FIXED: right = turn right
 
             double leftPower  = move - turn;
             double rightPower = move + turn;
@@ -72,9 +73,14 @@ public class StarterBotTeleOpClanker extends LinearOpMode {
             leftDrive.setPower(leftPower);
             rightDrive.setPower(rightPower);
 
-            // ---------------- FLYWHEEL ----------------
-            double flywheelPower = gamepad1.right_trigger * 0.65;
-            mainFlywheel.setPower(flywheelPower);
+            // ---------------- FLYWHEEL (A BUTTON TOGGLE) ----------------
+            boolean currentAState = gamepad1.a;
+            if (currentAState && !lastAState) {
+                flywheelOn = !flywheelOn;
+            }
+            lastAState = currentAState;
+
+            mainFlywheel.setPower(flywheelOn ? 0.65 : 0.0);
 
             // ---------------- INTAKE ----------------
             if (gamepad1.left_bumper) {
@@ -83,23 +89,23 @@ public class StarterBotTeleOpClanker extends LinearOpMode {
                 intakeBaby.setPower(0.0);
             }
 
-            // ---------------- SERVO CONTROL (REVERSED) ----------------
-            double servoInput = gamepad1.left_trigger; // 0..1
-            double leftServoPos  = 0.5 - (servoInput * 0.5);
-            double rightServoPos = 0.5 + (servoInput * 0.5);
-
-            leftSmallWheel.setPosition(leftServoPos);
-            rightSmallWheel.setPosition(rightServoPos);
+            // ---------------- SERVO CONTROL (BUTTONS) ----------------
+            // X = OPEN, Y = CLOSE
+            if (gamepad1.x) {
+                leftSmallWheel.setPosition(0.0);
+                rightSmallWheel.setPosition(1.0);
+            }
+            else if (gamepad1.y) {
+                leftSmallWheel.setPosition(0.5);
+                rightSmallWheel.setPosition(0.5);
+            }
 
             // ---------------- TELEMETRY ----------------
-            telemetry.addData("Move (Left Y)", "%.2f", move);
-            telemetry.addData("Turn (Right X)", "%.2f", turn);
+            telemetry.addData("Flywheel", flywheelOn ? "ON" : "OFF");
             telemetry.addData("Left Power", "%.2f", leftPower);
             telemetry.addData("Right Power", "%.2f", rightPower);
-            telemetry.addData("Flywheel", "%.2f", flywheelPower);
-            telemetry.addData("Intake", gamepad1.left_bumper ? "ON" : "OFF");
-            telemetry.addData("Left Servo", "%.2f", leftServoPos);
-            telemetry.addData("Right Servo", "%.2f", rightServoPos);
+            telemetry.addData("Left Servo", "%.2f", leftSmallWheel.getPosition());
+            telemetry.addData("Right Servo", "%.2f", rightSmallWheel.getPosition());
             telemetry.update();
         }
     }
