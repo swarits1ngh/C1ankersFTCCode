@@ -59,8 +59,8 @@ public class StarterBotTeleOpClanker extends LinearOpMode {
             double move = -gamepad1.left_stick_y;    // Forward/backward
             double turn = -gamepad1.right_stick_x;   // Corrected: RIGHT = turn right
 
-            double leftPower  = move + turn;
-            double rightPower = move - turn;
+            double leftPower  = move - turn;
+            double rightPower = move + turn;
 
             // Normalize motor power
             double max = Math.max(Math.abs(leftPower), Math.abs(rightPower));
